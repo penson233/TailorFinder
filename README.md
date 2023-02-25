@@ -31,6 +31,7 @@ https://github.com/blechschmidt/massdns
 
 
 
+linux，mac 记得先加下执行权限
 以上工具自带，不需要自行编译安装
 
 
