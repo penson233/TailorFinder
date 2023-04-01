@@ -15,16 +15,10 @@ from tools.crtsearch import CrtSearch
 from tools.veryvp import veryvpfind
 from tools import tyc
 from tools import aqc
-import asyncio
-import aiodns
 import sys
 
-if sys.platform=="win32" or sys.platform=="win64":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
-loop = asyncio.get_event_loop()
-resolver = aiodns.DNSResolver(loop=loop)
 
 async def query(name, query_type):
     return await resolver.query(name, query_type)
@@ -36,10 +30,7 @@ def filter(text):
 
 
 
-def allDomain(alldomain):
-
-    ipreg = re.compile("\d+\.\d+\.\d+\.\d+")
-
+def allDomain(alldomain,out_path):
     domain_isreal=[]
     place = re.compile("http://|https://|\n|:\d+")
     for i in alldomain:
@@ -47,21 +38,11 @@ def allDomain(alldomain):
         if target not in domain_isreal:
             domain_isreal.append(target)
 
-    alldomainwb.append(["alldomain","ip地址"])
-    allip=[]
-    for domain in domain_isreal:
-        try:
-            coro = query(domain, 'A')
-            result = loop.run_until_complete(coro)
-
-            ipfind=ipreg.findall(str(result[0]))[0]
-            alldomainwb.append([domain,ipfind])
-            allip.append(ipfind)
-        except:
-            alldomainwb.append([domain, "no found ip"])
-
-
-    return allip
+    alldomainwb.append(["alldomain"])
+    with open(out_path+'/alldomain.txt','w') as f:
+        for domain in domain_isreal:
+            f.write(domain+"\n")
+            alldomainwb.append([domain])
 
 
 def findallDomain(name,outpath,percent):
@@ -96,8 +77,8 @@ def findallDomain(name,outpath,percent):
 
 
     e=''
+
     ipreg = re.compile("\d+\.\d+\.\d+\.\d+")
-    
     with open(outpath+"/domain",'w') as f:
         for t in repeat.split('\n'):
             if t not in e:
@@ -140,21 +121,6 @@ def CollectSubdomain(domain_file,out_path,name):
 
     colorprint.Red("\n[-]Gathering subdomains......")
 
-
-
-    '''subfinder'''
-    colorprint.Red("[-]using subfinder....")
-    subfinderscan(domain_file,out_path,alldomain,platform)
-
-    '''fofa'''
-    colorprint.Red("[-]using fofa....")
-    fofascan(domain_file,alldomain)
-
-    '''hunter'''
-    colorprint.Red("[-]using hunter....")
-    hunterscan(domain_file,alldomain)
-
-
     '''crt'''
     colorprint.Red("[-]using crt....")
     CrtSearch(domain_file,alldomain)
@@ -167,27 +133,38 @@ def CollectSubdomain(domain_file,out_path,name):
     colorprint.Red("[-]using securitytrails....")
     securscan(domain_file,alldomain)
 
+
+    '''fofa'''
+    colorprint.Red("[-]using fofa....")
+    fofascan(domain_file,alldomain)
+
+    '''hunter'''
+    colorprint.Red("[-]using hunter....")
+    hunterscan(domain_file,alldomain)
+
+
     '''assetfinder'''
     colorprint.Red("[-]using assetfinder....")
     assetfinderscan(domain_file,out_path,alldomain,platform)
 
+    '''subfinder'''
+    colorprint.Red("[-]using subfinder....")
+    subfinderscan(domain_file,out_path,alldomain,platform)
 
     '''shuffledns'''
     colorprint.Red("[-]using shuffledns to brute subdomains....")
     shufflednsscan(domain_file,out_path,alldomain,platform)
 
 
-
-
     colorprint.Green("[+]collect all subdomains successfully")
 
-    allip=allDomain(alldomain)
+    allDomain(alldomain,out_path)
 
 
     wb.save(out_path+'/'+'test.xlsx')
 
-    '''fofa hunter c段收集统计'''
-    readxls(out_path,name,allip)
+    # '''fofa hunter c段收集统计'''
+    readxls(out_path,name)
     colorprint.Green("[+]task finished")
 
 

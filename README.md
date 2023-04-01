@@ -1,3 +1,7 @@
+
+
+
+
 # Tailorfinder
 
 一款方便懒人对cn企业资产自动化收集工具,避免重复造轮子,因为将现有的信息工具缝起来并将结果自动进行去重并对fofa,hunter收集到的ip的c段进行统计,所以取名裁缝-Tailorfinder
@@ -6,10 +10,10 @@
 
 流程如下
 
-![image-20230224225012311](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230224225012311.png)
+![image-20230401103043662](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230401103043662.png)
 
 
-
+运行之前先给bin目录下的所有工具赋予可执行权限
 
 
 结合以下信息收集工具
@@ -97,11 +101,35 @@ python3.7 main.py -name 公司名称  -p 控股子公司的百分比 -o 输出�
 
 ![image-20221207170002930](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20221207170002930.png)
 
+也可以直接根据自己找的根域名进行查询
+
+```
+python3 main.py -name 名称  -d 根域名路径 -o 输出路径
+```
+
+
+
 
 
 再利用以上信息工具进行收集子域名并输出为excel,总共有以下几个表格
 
-![image-20230224224832989](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230224224832989.png)
+
+
+![image-20230401103334061](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230401103334061.png)
+
+
+
+解析到的域名也会保存在输出路径下
+
+![image-20230401103424712](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230401103424712.png)
+
+
+
+![image-20230401103133324](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230401103133324.png)
+
+
+
+
 
 
 
