@@ -25,6 +25,11 @@ securitykey=""
 #https://hunter.io
 hunteremailkey=""
 
+emailaccount = ""
+emailpassword = ""
+emailtarget=['']
+mailhost=""
+
 wb = Workbook()
 
 wb.create_sheet("domain",0)

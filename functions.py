@@ -14,14 +14,10 @@ from tools.IPgather import readxls
 from tools.crtsearch import CrtSearch
 from tools.veryvp import veryvpfind
 from tools import tyc
+from db.dao.sqlite import CreateTable,InsertTable
 from tools import aqc
 import sys
 
-
-
-
-async def query(name, query_type):
-    return await resolver.query(name, query_type)
 
 
 def filter(text):
@@ -143,6 +139,8 @@ def CollectSubdomain(domain_file,out_path,name):
     hunterscan(domain_file,alldomain)
 
 
+
+
     '''assetfinder'''
     colorprint.Red("[-]using assetfinder....")
     assetfinderscan(domain_file,out_path,alldomain,platform)
@@ -168,3 +166,14 @@ def CollectSubdomain(domain_file,out_path,name):
     colorprint.Green("[+]task finished")
 
 
+def CreateDatabase(name):
+    CreateTable(name)
+
+
+def HandleTable(outpath,name):
+    with open(outpath+"/alldomain.txt","r") as f:
+        read=f.readlines()
+    alldomain=','.join(read).replace('\n','').split(',')
+
+    colorprint.Green("\n[-]try to insert "+str(len(alldomain))+" to table")
+    InsertTable(alldomain,name)
