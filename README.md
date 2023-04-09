@@ -8,9 +8,11 @@
 
 收集的结果有子域名,c段,控股子公司，子公司及主公司主域名，邮箱,app资产
 
+支持持续话信息收集
+
 流程如下
 
-![image-20230401103043662](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230401103043662.png)
+![image-20230409190111980](https://cdn.jsdelivr.net/gh/penson233/images@main/uPic/image-20230409190111980.png)
 
 
 运行之前先给bin目录下的所有工具赋予可执行权限
