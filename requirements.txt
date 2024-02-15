@@ -1,5 +1,5 @@
-openpyxl==2.6.4
+openpyxl
 bs4==0.0.1
-requests==2.24.0
+requests
 lxml==4.9.2
 aiodns==3.00
