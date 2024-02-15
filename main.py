@@ -8,6 +8,7 @@
 # @Software: PyCharm
 
 import argparse
+import os
 import sys
 from tools import colorprint,Portscan
 import time
@@ -31,10 +32,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-
-    if args.outpath =='':
-        colorprint.Red("[-]you must input -o outpath")
-        sys.exit(0)
     if args.name =='':
         colorprint.Red("[-]you must input -name example")
         sys.exit(0)
@@ -43,7 +40,13 @@ if __name__ == '__main__':
         Portscan.Port_Scan(args.outpath, args.name, args.portfile)
 
 
+    if args.outpath =='':
+        colorprint.Red("[-]you must input -o outpath")
+        sys.exit(0)
+
     else:
+        if not os.path.exists(args.outpath):
+            os.mkdir(args.outpath)
 
         if args.time >0:
             #创建数据库
