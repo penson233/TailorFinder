@@ -43,10 +43,7 @@ def to_utf8(content, content_type):
     if match:
         title_text = match.group(1)
         encoding = chardet.detect(title_text.encode())['encoding']
-        if encoding!=None:
-            content_type = encoding.lower()
-        else:
-            content_type ='utf-8'
+        content_type = encoding.lower()
 
         if 'gbk' in content_type or 'gb2312' in content_type or 'gb18030' in content_type or 'windows-1252' in content_type:
             html_encode = "gb18030"
@@ -114,6 +111,7 @@ def Scan(target,resptext,fingerjson):
                         print(target, finger)
                         fingerlist.append(finger)
 
+
         else:
             if finger["request"]["method"] == "GET":
                 response = requests.get(f"{target}/{finger['request']['path']}",
@@ -124,9 +122,19 @@ def Scan(target,resptext,fingerjson):
                 except:
                     context_type = ""
                 response_t = to_utf8(response.text, context_type)
-                if check_keywords(response_t, finger['keyword']):
-                    print(target, finger)
-                    fingerlist.append(finger)
+                title_find = findtitle(response_t)
+                if finger["method"] == "keyword":
+                    if finger['location'] == 'title':
+                        if check_keywords(title_find, finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
+                    if finger['location'] == 'body':
+                        if check_keywords(response_t, finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
+
+
+
 
             elif finger["request"]["method"] == "POST":
                 response = requests.post(f"{target}/{finger['request']['path']}",
@@ -137,9 +145,16 @@ def Scan(target,resptext,fingerjson):
                 except:
                     context_type = ""
                 response_t = to_utf8(response.text, context_type)
-                if check_keywords(response_t, finger['keyword']):
-                    print(target, finger)
-                    fingerlist.append(finger)
+                title_find = findtitle(response_t)
+                if finger["method"] == "keyword":
+                    if finger['location'] == 'title':
+                        if check_keywords(title_find, finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
+                    if finger['location'] == 'body':
+                        if check_keywords(response_t, finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
     if len(fingerlist) == 0:
         print(target, "{'cms':'web'}")
         fingerlist.append({'cms': 'web'})
