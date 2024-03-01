@@ -2,7 +2,7 @@
 
 # 更新tips：
 
-优化了公司信息收集方式，新增端口识别，web服务指纹探测功能。微匹邮箱收集网站好像关了，先取消了利用该站点收集邮箱的功能。
+优化了公司根域名收集结果，显示界面
 
 
 
@@ -83,7 +83,9 @@ https://github.com/lemonlove7/EHole_magic
 
 ![image-20240215155642979](README.assets/image-20240215155642979.png)
 
+支持自定义命令参数 在config.py里
 
+![image-20240301102407798](README.assets/image-20240301102407798.png)
 
 # 使用前准备
 
@@ -124,7 +126,9 @@ python3.8 main.py -name 公司名称  -p 控股子公司的百分比 -fc 搜集�
 
 公司根域名结果
 
-![image-20240215155730642](README.assets/image-20240215155730642.png)公司股份结果
+![image-20240301102138203](README.assets/image-20240301102138203.png)
+
+公司股份结果
 
 ![image-20240215155739039](README.assets/image-20240215155739039.png)
 

@@ -3,3 +3,4 @@ bs4==0.0.1
 requests
 lxml==4.9.2
 aiodns==3.00
+chardet==5.2.0

@@ -6,6 +6,7 @@
 # @Site    : 
 # @File    : formatEmail.py
 # @Software: PyCharm
+#!/usr/bin/env python
 import requests
 from config import emailwb
 from tools import colorprint

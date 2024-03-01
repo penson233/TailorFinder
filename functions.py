@@ -11,6 +11,7 @@ from tools.securitytrails import securscan
 from tools.rappidns import rappidnssearch
 from tools.huntermail import hunterfindemail
 from tools.formatEmail import formatemailFind
+from tools.commons import readdomain
 from tools.Ip138 import Ip138search
 from config import *
 from tools.IPgather import readxls
@@ -49,7 +50,7 @@ def findallDomain(name,outpath,percent,count):
     tycresult,tycchildren=tyc.findalldomain(name,percent,count)
 
     aqcresult,aqcchildren,appresult=aqc.findalldomain(name,percent)
-    rootdomain.append(["公司",'描述','域名','icp备案号','来源'])
+    rootdomain.append(["公司",'描述','域名','icp备案号','来源','是否是分支机构','控股比例'])
     ctwb.append(['子公司','占股','金额',"来源"])
     appwb.append(['app名称','app类别','简介','所属公司'])
 
@@ -118,7 +119,7 @@ def findemail(domain_file,outpath):
         hunterfindemail(i.replace('\n',''),allemail)
         formatemailFind(i.replace('\n',''),allemail)
 
-    with open(outpath+'/allemail.txt','w') as f:
+    with open(outpath+'/allemail','w') as f:
         f.write('\n'.join(allemail))
 
 
@@ -129,42 +130,44 @@ def CollectSubdomain(domain_file,out_path,name):
 
     alldomain=[]
     platform=sys.platform
+    domains = readdomain(domain_file)
+
 
 
     colorprint.Red("\n[-]Gathering subdomains......")
 
     '''crt'''
     colorprint.Red("[-]using crt....")
-    CrtSearch(domain_file,alldomain)
+    colorprint.progress_bar(domains,CrtSearch,alldomain=alldomain)
+
+
 
     '''rappidns'''
-    colorprint.Red("[-]using rappidns....")
-    rappidnssearch(domain_file,alldomain)
+    colorprint.Red("\n[-]using rappidns....")
+    colorprint.progress_bar(domains,rappidnssearch , alldomain=alldomain)
+
 
     '''securitytrails'''
-    colorprint.Red("[-]using securitytrails....")
-    securscan(domain_file,alldomain)
+    colorprint.Red("\n[-]using securitytrails....")
+    colorprint.progress_bar(domains, securscan, alldomain=alldomain)
+
 
     '''ip138'''
-    colorprint.Red("[-]using ip138....")
-    Ip138search(domain_file,alldomain)
+    colorprint.Red("\n[-]using ip138....")
+    colorprint.progress_bar(domains, Ip138search, alldomain=alldomain)
 
 
     '''fofa'''
-    colorprint.Red("[-]using fofa....")
-    fofa_ip=fofascan(domain_file,alldomain)
-    with open(out_path+"/alive_ip.txt",'w') as f:
-        f.write(fofa_ip)
+    colorprint.Red("\n[-]using fofa....")
+    colorprint.progress_bar(domains, fofascan,out_path=out_path, alldomain=alldomain)
 
     '''hunter'''
-    colorprint.Red("[-]using hunter....")
-    hunterscan(domain_file,alldomain)
-
-
+    colorprint.Red("\n[-]using hunter....")
+    colorprint.progress_bar(domains, hunterscan, alldomain=alldomain)
 
 
     '''assetfinder'''
-    colorprint.Red("[-]using assetfinder....")
+    colorprint.Red("\n[-]using assetfinder....")
     assetfinderscan(domain_file,out_path,alldomain,platform)
 
     '''subfinder'''
@@ -175,11 +178,7 @@ def CollectSubdomain(domain_file,out_path,name):
     colorprint.Red("[-]using shuffledns to brute subdomains....")
     shufflednsscan(domain_file,out_path,alldomain,platform)
 
-
-
-
     colorprint.Green("[+]collect all subdomains successfully")
-
     allDomain(alldomain,out_path)
 
 

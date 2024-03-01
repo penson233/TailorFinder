@@ -64,3 +64,39 @@ shufflednswb=wb["shuffledns"]
 securitytrailswb=wb["securitytrails"]
 rappidnswb=wb["rappidns"]
 ip138wb=wb["ip138"]
+
+#fofa查询语法
+fofasearch= "domain=\"{}\"||cert=\"{}\""
+
+#hunter查询语法
+huntersearch='domain="{}"'
+
+
+
+#工具参数
+#shuffledns
+#linux
+l_shuffledns="cat %s | xargs -I {} ./bin/shuffledns/shuffledns -d {} -w ./bin/shuffledns/domain.txt -r ./bin/shuffledns/resolvers.txt  >> %s/shuffledns.txt -m ./bin/massdns/massdns_linux"
+#macos
+m_shuffledns="cat %s | xargs -I {} ./bin/shuffledns/shuffledns -d {} -w ./bin/shuffledns/domain.txt -r ./bin/shuffledns/resolvers.txt  >> %s/shuffledns.txt -m ./bin/massdns/massdns_linux"
+
+
+#assetfinder
+#linux
+l_assetfinder="cat %s | xargs -I {} ./bin/assetfinder/assetfinder {} >> %s/assetfinder.txt"
+#macos
+m_assetfinder="cat %s | xargs -I {} ./bin/assetfinder/assetfinder_m {} >> %s/assetfinder.txt"
+
+
+
+#subfinder
+#linux
+l_subfinder="./bin/subfinder/subfinder -dL {} -o {}/subfinder.txt"
+#mac
+m_subfinder="./bin/subfinder/subfinder_m -dL {} -o {}/subfinder.txt"
+
+#端口扫描参数 预留格式化参数{} outpath
+masscan="masscan -iL {}/alive_ip.txt -p 1-65535 --rate=1000 -oJ {}/alive_port.json"
+
+#nmap扫描部分参数
+nmap="-sV -n --open -Pn -sT -T4 --version-intensity 7"

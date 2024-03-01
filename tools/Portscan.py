@@ -12,15 +12,14 @@ import re
 import requests
 from tools.commons import pre_html,aft_html
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from tools import WebfingerScan
-# 禁用警告
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-from tools import colorprint,systemcmd
+from tools import WebfingerScan,colorprint,systemcmd
 import openpyxl
 import ipaddress
 from bs4 import BeautifulSoup
+from config import masscan,nmap
 
+# 禁用警告
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 def is_internal_ip(ip):
     try:
@@ -45,8 +44,6 @@ def Port_Scan(outpath,name,portfile):
     with open(outpath+"/alive_ip.txt") as f:
         read=f.read().split('\n')[:-1]
 
-
-    print(read)
 
     with open(outpath+"/alive_ip.txt",'a+') as f:
         for domain in columns[0]:
@@ -75,9 +72,9 @@ def Port_Scan(outpath,name,portfile):
 
 
 
-    systemcmd.runshell(f"masscan -iL {outpath}/alive_ip.txt -p 1-65535 --rate=1000 -oJ {outpath}/alive_port.json","massscan")
+    systemcmd.runshell(masscan.format(outpath,outpath),"massscan")
 
-    with open("./finger/finger.json",'r') as f:
+    with open("./finger/fingers.json",'r') as f:
         fingerjson=json.loads(f.read())["fingerprint"]
 
     with open(outpath+"/alive_port.json",'r') as f:
@@ -106,7 +103,7 @@ def Port_Scan(outpath,name,portfile):
     #nmap 扫描
     for key in ip_port:
         if key in iplist:
-            systemcmd.runshell(f"nmap -sV -n --open -Pn -sT -T4 --version-intensity 7 -p {','.join(ip_port[key])} {key} -oX {outpath+'/nmap'}/nmap_{iplist[key]}.xml","nmap")
+            systemcmd.runshell(f"nmap {nmap} -p {','.join(ip_port[key])} {key} -oX {outpath+'/nmap'}/nmap_{iplist[key]}.xml","nmap")
 
             systemcmd.runshell(f"xsltproc -o {outpath+'/nmap'}/nmap_{iplist[key]}.html ./bin/nmap/mode.xsl {outpath+'/nmap'}/nmap_{iplist[key]}.xml","nmap")
 
@@ -114,7 +111,7 @@ def Port_Scan(outpath,name,portfile):
                 http_https_probe(iplist[key]+":"+port,request,key,tbody,fingerjson)
         else:
             systemcmd.runshell(
-                f"nmap -sV -n --open -Pn -sT -T4 --version-intensity 7 -p {','.join(ip_port[key])} {key} -oX {outpath + '/nmap'}/nmap_{key}.xml",
+                f"nmap {nmap} -p {','.join(ip_port[key])} {key} -oX {outpath + '/nmap'}/nmap_{key}.xml",
                 "nmap")
 
             systemcmd.runshell(
@@ -198,7 +195,8 @@ def httprequets(http_url,fingerjson,fingerlist,request,tbody,temp,ip):
         context_type = ""
 
     resp_text = WebfingerScan.to_utf8(response_http.text, context_type)
-    if response_http.status_code != 403 and response_http.status_code != 400:
+    error_code =[403,400,422]
+    if response_http.status_code not in error_code:
         fingerlist = WebfingerScan.Scan(http_url, resp_text, fingerjson)
 
     soup = BeautifulSoup(resp_text, 'html.parser')

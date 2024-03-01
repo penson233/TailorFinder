@@ -1,39 +1,41 @@
 import requests
-from tools.commons import readdomain
+from tools import colorprint
 from config import securitykey,securitytrailswb
 
 
 
-def securscan(file,alldomain):
+def securscan(domain,alldomain):
 
 
-    domains = readdomain(file)
     securitytrailswb.append(["domains"])
-    for domain in domains:
-        domain=domain.replace("\n","")
-        url = f"https://api.securitytrails.com/v1/domain/{domain}/subdomains?children_only=false&include_inactive=true"
+    domain=domain.replace("\n","")
+    url = f"https://api.securitytrails.com/v1/domain/{domain}/subdomains?children_only=false&include_inactive=true"
 
-        headers = {
-            "accept": "application/json",
-            "APIKEY": securitykey
-        }
+    headers = {
+        "accept": "application/json",
+        "APIKEY": securitykey
+    }
 
-        try:
-            response = requests.get(url, headers=headers).json()
+    try:
+        response = requests.get(url, headers=headers).json()
 
 
-            subdomains=response["subdomains"]
-            if(len(subdomains) >0):
-
-                for i in subdomains:
-                    subdomain = i + "." + domain
-                    try:
-                        print(subdomain)
+        subdomains=response["subdomains"]
+        if(len(subdomains) >0):
+            colorprint.Green(f"\n[+] found {len(subdomains)} in {domain}")
+            for i in subdomains:
+                subdomain = i + "." + domain
+                try:
+                    if subdomain not in alldomain:
                         alldomain.append(subdomain)
-                    except Exception as e:
-                        print(e)
-                        print("error: "+i+"."+domain+" "+e.__str__()+"\n")
-                        securitytrailswb.append(['error_domain: '+subdomain])
-        except:
-            continue
+                    securitytrailswb.append([subdomain])
+                except Exception as e:
+                    print("\nerror: "+i+"."+domain+" "+e.__str__()+"\n")
+                    securitytrailswb.append(['error_domain: '+subdomain])
+        else:
+            print(f"\n[-] no found in {domain}")
+    except Exception as e:
+        print(f"\n[-] no found in {domain}")
+
+
 

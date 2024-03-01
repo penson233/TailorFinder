@@ -9,13 +9,13 @@
 import re
 import json
 import time
-
+import math
 import requests
 from config import aqccookie
 from tools import colorprint
 
 
-def finddomain(pid,result,name):
+def finddomain(pid,result,name,type=0,percent=0):
     url="https://aiqicha.baidu.com/detail/intellectualPropertyAjax?pid="+str(pid)
     header={
         'User-Agent':'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:107.0) Gecko/20100101 Firefox/107.0',
@@ -28,9 +28,12 @@ def finddomain(pid,result,name):
     resultj=json.loads(r.text)['data']['icpinfo']
 
     for i in resultj['list']:
-
-        result.append([name,i['siteName'],'\n'.join(i['domain']),i['icpNo'],'爱企查'])
-
+        if type==1:
+            result.append([name,i['siteName'],'\n'.join(i['domain']),i['icpNo'],'爱企查','是','0'])
+        elif percent!=0:
+            result.append([name, i['siteName'], '\n'.join(i['domain']), i['icpNo'], '爱企查', '是', str(percent)+"%"])
+        else:
+            result.append([name, i['siteName'], '\n'.join(i['domain']), i['icpNo'], '爱企查', '否', '0'])
 
 def findalldomain(name,percent):
 
@@ -60,8 +63,9 @@ def findalldomain(name,percent):
     if len(json.loads(findre.findall(r.text)[0])['result']['resultList']) > 0:
         companyId=json.loads(findre.findall(r.text)[0])['result']['resultList'][0]['pid']
         companyname=json.loads(findre.findall(r.text)[0])['result']['resultList'][0]['titleName']
+
         finddomain(companyId,result,companyname)
-        time.sleep(1)
+        time.sleep(2)
         findapp(companyId,name,appresult)
 
 
@@ -74,7 +78,7 @@ def findalldomain(name,percent):
             try:
                 if int(float(children[2].replace('%',''))) >= percent:
                     time.sleep(1)
-                    finddomain(children[1],result,children[0])
+                    finddomain(children[1],result,children[0],percent=int(float(children[2].replace('%',''))))
                     time.sleep(1)
                     findapp(children[1],children[0],appresult)
                     time.sleep(1)
@@ -85,8 +89,9 @@ def findalldomain(name,percent):
 
         #找分支机构
         fenzhi_id=findbranch(companyId)
+
         for j in fenzhi_id:
-            finddomain(j[1],result,j[0])
+            finddomain(j[1],result,j[0],type=1)
             time.sleep(2)
         colorprint.Green("[+] ai_qi_cha found "+str(len(fenzhi_id))+" branch")
 
@@ -139,7 +144,9 @@ def findapp(pid,name,results):
 
 #找分支机构
 def findbranch(id):
-    url="https://aiqicha.baidu.com/detail/basicAllDataAjax?pid={}".format(id)
+
+
+    url="https://aiqicha.baidu.com/detail/branchajax?p=1&size=10&pid={}".format(id)
     header = {
         'User-Agent': 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:107.0) Gecko/20100101 Firefox/107.0',
         'Cookie': aqccookie,
@@ -151,10 +158,23 @@ def findbranch(id):
     r=requests.get(url,headers=header).json()
     fenzhi_id=[]
 
-    if len(r['data']['branchsData']['list']) >0:
-        for i in r['data']['branchsData']['list']:
+
+
+    if len(r['data']['list']) >0:
+        for i in r['data']['list']:
             if i not in fenzhi_id:
                 fenzhi_id.append([i['entName'],i['pid']])
+
+        allpage = math.ceil(r['data']['totalNum'] // 10)
+        for num in range(2, allpage+1):
+            url = "https://aiqicha.baidu.com/detail/branchajax?p={}&size=10&pid={}".format(num,id)
+            r = requests.get(url, headers=header).json()
+            for i in r['data']['list']:
+                if i not in fenzhi_id:
+                    fenzhi_id.append([i['entName'], i['pid']])
+
+
+
     return fenzhi_id
 
 
