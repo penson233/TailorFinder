@@ -74,7 +74,7 @@ def Port_Scan(outpath,name,portfile):
 
     systemcmd.runshell(masscan.format(outpath,outpath),"massscan")
 
-    with open("./finger/fingers.json",'r') as f:
+    with open("./finger/finger.json",'r') as f:
         fingerjson=json.loads(f.read())["fingerprint"]
 
     with open(outpath+"/alive_port.json",'r') as f:
