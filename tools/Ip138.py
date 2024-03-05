@@ -32,10 +32,11 @@ def Ip138search(domain,alldomain):
                 for tr in trs:
                     tds=tr.find_all('td')
                     if len(tds) > 0:
-                        if tds[1].text not in alldomain:
-                             alldomain.append(tds[1].text)
+                        if "子域名" not in tds[1].text:
+                            if tds[1].text not in alldomain:
+                                 alldomain.append(tds[1].text)
 
-                        ip138wb.append([tds[1].text])
+                            ip138wb.append([tds[1].text])
         else:
             print(f"\n[-]no found in {domain}")
     except Exception as e:

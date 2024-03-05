@@ -125,7 +125,7 @@ def findemail(domain_file,outpath):
 
 
 
-def CollectSubdomain(domain_file,out_path,name):
+def CollectSubdomain(domain_file,out_path,name,iscdn):
 
 
     alldomain=[]
@@ -185,7 +185,7 @@ def CollectSubdomain(domain_file,out_path,name):
     wb.save(out_path+'/'+'test.xlsx')
 
     # '''fofa hunter c段收集统计'''
-    readxls(out_path,name)
+    readxls(out_path,name,iscdn)
     colorprint.Green("[+]task finished")
 
 

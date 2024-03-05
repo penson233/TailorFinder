@@ -7,8 +7,8 @@ import aiodns
 import asyncio
 import sys
 import socket
-
 from tools.commons import readdomain
+from tools import CheckCDN
 
 if sys.platform == "win32" or sys.platform == "win64":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -97,7 +97,7 @@ def DomainsAlive(workbook):
             print(e)
             continue
 
-def readxls(outpath,name):
+def readxls(outpath,name,iscdn):
     colorprint.Red("[-]start to gather ip....")
     workbook = openpyxl.load_workbook(outpath+"/test.xlsx")
 
@@ -110,6 +110,7 @@ def readxls(outpath,name):
     hunter_iplist = []
     ip_fan_fofa = []
     ip_fan_hunter = []
+
 
     '''获取fofa收集到的ip'''
     fofa = workbook["fofa"]
@@ -126,7 +127,7 @@ def readxls(outpath,name):
                     except:
                         continue
 
-        fofa_all = Counter(fofa_iplist).most_common()
+    fofa_all = Counter(fofa_iplist).most_common()
 
     '''获取hunter收集到的ip'''
     hunter = workbook["hunter"]
@@ -142,7 +143,7 @@ def readxls(outpath,name):
                     except:
                         continue
 
-        hunter_all = Counter(hunter_iplist).most_common()
+    hunter_all = Counter(hunter_iplist).most_common()
 
 
 
@@ -161,15 +162,15 @@ def readxls(outpath,name):
         hunter_ip.append([all[0] + ".0/24", all[1]])
 
 
-    DomainsAlive(workbook)
+
+    if not iscdn:
+        DomainsAlive(workbook)
+    else:
+        CheckCDN.CheckIfCdn(workbook,outpath)
+
+
 
     asyncio.run(DomainSearch(outpath,workbook))
-
-
-
-
-
-
 
 
 
@@ -202,7 +203,3 @@ def readxls(outpath,name):
 
     workbook.save(outpath+"/"+name+".xlsx")
     os.system("rm -f "+outpath+"/test.xlsx")
-
-
-if __name__ == '__main__':
-    DomainsAlive()

@@ -2,7 +2,7 @@
 
 # 更新tips：
 
-优化了公司根域名收集结果，显示界面
+优化了公司子域名ip138问题，新增cdn识别功能（可以开启关闭）
 
 
 
@@ -20,7 +20,7 @@ nmap，masscan ，xsltproc请大家自行安装，只支持linux，mac版本，w
 
 流程如下
 
-![image-20240215155633156](README.assets/image-20240215155633156.png)
+![image-20240305210720766](README.assets/image-20240305210720766.png)
 
 
 

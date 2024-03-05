@@ -12,10 +12,12 @@ hunter_name=""
 #天眼查
 tyccookie=""
 tyctoken=""
+
 #veryvp http://veryvp.com/
 veryvpcookie=""
 #爱奇查
 aqccookie=""
+
 #securitytrails
 securitykey=""
 
@@ -78,7 +80,7 @@ huntersearch='domain="{}"'
 #linux
 l_shuffledns="cat %s | xargs -I {} ./bin/shuffledns/shuffledns -d {} -w ./bin/shuffledns/domain.txt -r ./bin/shuffledns/resolvers.txt  >> %s/shuffledns.txt -m ./bin/massdns/massdns_linux"
 #macos
-m_shuffledns="cat %s | xargs -I {} ./bin/shuffledns/shuffledns -d {} -w ./bin/shuffledns/domain.txt -r ./bin/shuffledns/resolvers.txt  >> %s/shuffledns.txt -m ./bin/massdns/massdns_linux"
+m_shuffledns="cat %s | xargs -I {} ./bin/shuffledns/shuffledns_m -d {} -w ./bin/shuffledns/domain.txt -r ./bin/shuffledns/resolvers.txt  >> %s/shuffledns.txt -m ./bin/massdns/massdns_linux"
 
 
 #assetfinder
