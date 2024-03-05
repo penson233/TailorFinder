@@ -3,6 +3,7 @@
 # 更新tips：
 
 优化了公司子域名ip138问题，参考了该项目（直接抄代码）https://github.com/timwhitez/Frog-checkCDN 新增cdn识别功能（可以开启关闭）
+-iscdn 默认为False
 
 
 
