@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+
     if args.name =='':
         colorprint.Red("[-]you must input -name example")
         sys.exit(0)
@@ -67,8 +68,10 @@ if __name__ == '__main__':
                 time.sleep(args.time*3600*24)
 
         else:
-            if args.domain_path != '' and args.portscan== False and args.collect== False:
+            if args.domain_path != '':
                 CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
+                if args.portscan== True:
+                    Portscan.Port_Scan(args.outpath, args.name, args.portfile)
             else:
                 findallDomain(args.name,args.outpath,args.percent,args.fcount)
                 if args.collect==True:
