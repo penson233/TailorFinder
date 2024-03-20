@@ -41,40 +41,39 @@ if __name__ == '__main__':
 
     if args.portscan == True and args.collect == False:
         Portscan.Port_Scan(args.outpath, args.name, args.portfile)
-
-
-
-    if args.outpath =='':
-        colorprint.Red("[-]you must input -o outpath")
-        sys.exit(0)
     else:
-        if not os.path.exists(args.outpath):
-            os.mkdir(args.outpath)
-
-        if args.time >0:
-            #创建数据库
-            CreateDatabase(args.name)
-            while True:
+    
+        if args.outpath =='':
+            colorprint.Red("[-]you must input -o outpath")
+            sys.exit(0)
+        else:
+            if not os.path.exists(args.outpath):
+                os.mkdir(args.outpath)
+    
+            if args.time >0:
+                #创建数据库
+                CreateDatabase(args.name)
+                while True:
+                    if args.domain_path != '':
+                        CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
+                    else:
+                        findallDomain(args.name, args.outpath, args.percent,args.fcount)
+                        if args.collect == True:
+                            CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.iscdn)
+                            if args.portscan == True:
+                                Portscan.Port_Scan(args.outpath, args.name,args.portfile)
+                    HandleTable(args.outpath, args.name)
+    
+                    time.sleep(args.time*3600*24)
+    
+            else:
                 if args.domain_path != '':
                     CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
+                    if args.portscan== True:
+                        Portscan.Port_Scan(args.outpath, args.name, args.portfile)
                 else:
-                    findallDomain(args.name, args.outpath, args.percent,args.fcount)
-                    if args.collect == True:
+                    findallDomain(args.name,args.outpath,args.percent,args.fcount)
+                    if args.collect==True:
                         CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.iscdn)
                         if args.portscan == True:
-                            Portscan.Port_Scan(args.outpath, args.name,args.portfile)
-                HandleTable(args.outpath, args.name)
-
-                time.sleep(args.time*3600*24)
-
-        else:
-            if args.domain_path != '':
-                CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
-                if args.portscan== True:
-                    Portscan.Port_Scan(args.outpath, args.name, args.portfile)
-            else:
-                findallDomain(args.name,args.outpath,args.percent,args.fcount)
-                if args.collect==True:
-                    CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.iscdn)
-                    if args.portscan == True:
-                        Portscan.Port_Scan(args.outpath, args.name, args.portfile)
+                            Portscan.Port_Scan(args.outpath, args.name, args.portfile)
