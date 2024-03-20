@@ -29,7 +29,7 @@ pre_html='''<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>台州银行收集结果</title>
+    <title>penson</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
@@ -142,7 +142,7 @@ aft_html=''';var tableBody = document.getElementById('json-table').getElementsBy
             var clipboard = new ClipboardJS(copyButton, {
                 text: function (trigger) {
                     var columnIndex = trigger.getAttribute('data-column-index');
-                    return dataTable.column(columnIndex).data().toArray().join('');
+                    return dataTable.column(columnIndex).data().toArray().join('\n');
                 }
             });
 
