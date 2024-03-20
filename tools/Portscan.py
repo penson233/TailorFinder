@@ -29,6 +29,18 @@ def is_internal_ip(ip):
         # Invalid IP address format
         return False
 
+def check_ip_type(ip_address):
+    try:
+        ip = ipaddress.ip_address(ip_address)
+        if ip.version == 4:
+            return 4
+        elif  ip.version == 6:
+            return 6
+        else:
+            return 0
+    except ValueError:
+        return False
+
 
 def Port_Scan(outpath,name,portfile):
     colorprint.Red("[-]start to scaning ip....")
@@ -54,9 +66,9 @@ def Port_Scan(outpath,name,portfile):
                     res=result.split('\n')
                     for j in res:
                         if j !="":
-                            if re.match("\d+\.\d+\.\d+\.\d+", j):
+                            if check_ip_type(j)== 4 or check_ip_type(j)== 6:
                                 if j not in iplist:
-                                    if re.search("\d+\.\d+\.\d+\.\d+", j):
+                                    if check_ip_type(j)== 4 or check_ip_type(j)== 6:
                                         if not is_internal_ip(j):
                                             iplist[j] = domain.value
                                             print(j+"  :  "+domain.value)
@@ -194,10 +206,10 @@ def httprequets(http_url,fingerjson,fingerlist,request,tbody,temp,ip):
     except:
         context_type = ""
 
-    resp_text = WebfingerScan.to_utf8(response_http.text, context_type)
+
     error_code =[403,400,422]
     if response_http.status_code not in error_code:
-        fingerlist = WebfingerScan.Scan(http_url, resp_text, fingerjson)
+        fingerlist = WebfingerScan.Scan(http_url, response_http, fingerjson,context_type)
 
     soup = BeautifulSoup(resp_text, 'html.parser')
 
