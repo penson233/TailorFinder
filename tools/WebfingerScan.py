@@ -43,7 +43,8 @@ def to_utf8(content, content_type):
     if match:
         title_text = match.group(1)
         encoding = chardet.detect(title_text.encode())['encoding']
-        content_type = encoding.lower()
+        if encoding !=None:
+            content_type = encoding.lower()
 
         if 'gbk' in content_type or 'gb2312' in content_type or 'gb18030' in content_type or 'windows-1252' in content_type:
             html_encode = "gb18030"
@@ -94,7 +95,8 @@ def check_keywords(string, keywords):
     return all(keyword in string for keyword in keywords)
 
 
-def Scan(target,resptext,fingerjson):
+def Scan(target,resp,fingerjson,content_type):
+    resptext = to_utf8(resp.text, content_type)
     resptitle=findtitle(resptext)
 
     fingerlist=[]
@@ -106,8 +108,12 @@ def Scan(target,resptext,fingerjson):
                     if check_keywords(resptitle, finger['keyword']):
                         print(target, finger)
                         fingerlist.append(finger)
-                if finger['location'] == 'body':
+                elif finger['location'] == 'body':
                     if check_keywords(resptext, finger['keyword']):
+                        print(target, finger)
+                        fingerlist.append(finger)
+                elif finger['location'] == 'header':
+                    if check_keywords(str(resp.headers), finger['keyword']):
                         print(target, finger)
                         fingerlist.append(finger)
 
@@ -128,11 +134,14 @@ def Scan(target,resptext,fingerjson):
                         if check_keywords(title_find, finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
-                    if finger['location'] == 'body':
+                    elif finger['location'] == 'body':
                         if check_keywords(response_t, finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
-
+                    elif finger['location'] == 'header':
+                        if check_keywords(str(resp.headers), finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
 
 
 
@@ -151,8 +160,12 @@ def Scan(target,resptext,fingerjson):
                         if check_keywords(title_find, finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
-                    if finger['location'] == 'body':
+                    elif finger['location'] == 'body':
                         if check_keywords(response_t, finger['keyword']):
+                            print(target, finger)
+                            fingerlist.append(finger)
+                    elif finger['location'] == 'header':
+                        if check_keywords(str(resp.headers), finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
     if len(fingerlist) == 0:
