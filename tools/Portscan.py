@@ -206,10 +206,12 @@ def httprequets(http_url,fingerjson,fingerlist,request,tbody,temp,ip):
     except:
         context_type = ""
 
+    resp_text = WebfingerScan.to_utf8(response_http.content.decode(), context_type)
 
     error_code =[403,400,422]
     if response_http.status_code not in error_code:
         fingerlist = WebfingerScan.Scan(http_url, response_http, fingerjson,context_type)
+
 
     soup = BeautifulSoup(resp_text, 'html.parser')
 
@@ -241,7 +243,7 @@ def httpsrequest(https_url, fingerjson, fingerlist, request, tbody, temp,ip):
         except:
             context_type = ""
 
-        resp_text = WebfingerScan.to_utf8(response_https.text, context_type)
+        resp_text = WebfingerScan.to_utf8(response_https.content.decode(), context_type)
 
         if response_https.status_code != 403 and response_https.status_code != 400:
             fingerlist=WebfingerScan.Scan(https_url,resp_text,fingerjson)
