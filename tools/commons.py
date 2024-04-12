@@ -30,9 +30,13 @@ pre_html='''<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>penson</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
     <style>
         body {
@@ -65,7 +69,7 @@ pre_html='''<!DOCTYPE html>
         }
 
         .filter-input {
-            width: 80%;
+            width: 100%;
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid #ccc;
@@ -78,7 +82,7 @@ pre_html='''<!DOCTYPE html>
 
 <h1>TailorFinder收集结果</h1>
 
-<table id="json-table">
+<table id="json-table" class="table table-striped">
     <thead>
         <tr>
             <th>Domain <input type="text" class="filter-input" placeholder="Filter"></th>
@@ -93,8 +97,6 @@ pre_html='''<!DOCTYPE html>
     <tbody></tbody>
 </table>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script>'''
 
 aft_html=''';var tableBody = document.getElementById('json-table').getElementsByTagName('tbody')[0];
@@ -117,7 +119,7 @@ aft_html=''';var tableBody = document.getElementById('json-table').getElementsBy
             cellServer.textContent = item[domain].server;
             cellTitle.textContent = item[domain].title;
             cellCode.textContent = item[domain].code;
-            fingerText.textContent = item[domain].finger
+            fingerText.textContent = item[domain].finger;
         }
     });
 
@@ -134,7 +136,7 @@ aft_html=''';var tableBody = document.getElementById('json-table').getElementsBy
         // Add copy button for each column
         $('#json-table thead th').each(function (index) {
             var copyButton = document.createElement('button');
-            copyButton.className = 'copy-column-btn';
+            copyButton.className = 'copy-column-btn btn btn-primary btn-sm';
             copyButton.textContent = 'Copy Column';
             copyButton.setAttribute('data-column-index', index);
             this.appendChild(copyButton);
