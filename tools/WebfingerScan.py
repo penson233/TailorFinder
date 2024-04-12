@@ -18,6 +18,7 @@ def to_utf8(content, content_type):
     html_encode2 = ""
     html_encode3 = ""
 
+    #检测contentype
     if "gbk" in content_type or "gb2312" in content_type or "gb18030" in content_type or "windows-1252" in content_type:
         html_encode = "gb18030"
     elif "big5" in content_type:
@@ -28,6 +29,7 @@ def to_utf8(content, content_type):
     # 使用正则表达式提取<meta>标签中的charset信息
     meta_charset = re.compile(r'(?is)<meta[^>]*charset\s*=["\']?\s*([A-Za-z0-9\-]+)')
     match = meta_charset.search(content)
+
     if match:
         content_type = match.group(1).lower()
         if "gbk" in content_type or "gb2312" in content_type or "gb18030" in content_type or "windows-1252" in content_type:
@@ -40,6 +42,7 @@ def to_utf8(content, content_type):
     # 使用正则表达式提取<title>标签中的内容，并通过chardet库获取编码信息
     title_charset = re.compile(r'(?is)<title[^>]*>(.*?)<\/title>')
     match = title_charset.search(content)
+
     if match:
         title_text = match.group(1)
         encoding = chardet.detect(title_text.encode())['encoding']
@@ -53,16 +56,17 @@ def to_utf8(content, content_type):
         elif 'utf-8' in content_type:
             html_encode = "utf-8"
 
-    if html_encode != "" and html_encode2 != "" and html_encode != html_encode2:
+    if html_encode == "" and html_encode2 != "" and html_encode != html_encode2:
         html_encode = html_encode2
 
-    if html_encode == "utf-8" and html_encode != html_encode3:
+    if html_encode == "" and html_encode != html_encode3:
         html_encode = html_encode3
 
-    if html_encode != "" and html_encode != "utf-8":
+    if html_encode != "" and html_encode != "utf-8" :
         content = convert(content, html_encode, "utf-8")
 
-
+    if html_encode == "utf-8":
+        content = convert(content, html_encode,"utf-8")
 
     return content
 
