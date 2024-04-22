@@ -138,14 +138,17 @@ def Scan(target,resp,fingerjson,content_type):
                         if check_keywords(title_find, finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
+
                     elif finger['location'] == 'body':
                         if check_keywords(response_t, finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
+
                     elif finger['location'] == 'header':
                         if check_keywords(str(resp.headers), finger['keyword']):
                             print(target, finger)
                             fingerlist.append(finger)
+
 
 
 

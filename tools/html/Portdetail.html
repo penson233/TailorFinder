@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>penson</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center; /* Center-align the content */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .version-select-container {
+            margin-bottom: 15px;
+        }
+        .protocol-select-container {
+            margin-bottom: 15px;
+        }
+        .domain-select-container {
+            margin-bottom: 15px;
+        }
+        .ip-select-container {
+            margin-bottom: 15px;
+        }
+        .port-select-container {
+            margin-bottom: 15px;
+        }
+        .server-select-container {
+            margin-bottom: 15px;
+        }
+        .fu-select-container {
+            margin-bottom: 15px;
+        }
+        .cpe-select-container {
+            margin-bottom: 15px;
+        }
+        .zujian-select-container {
+            margin-bottom: 15px;
+        }
+        #port-select {
+            width: auto;
+        }
+        #version-select {
+            width: auto;
+        }
+        #fu-select {
+            width: auto;
+        }
+
+        a.custom-link {
+            color: #fff; /* 设置链接文本颜色 */
+            background-color: #007bff; /* 设置链接背景颜色 */
+            padding: 8px 16px; /* 设置链接内边距 */
+            border-radius: 4px; /* 设置链接圆角 */
+            text-decoration: none; /* 移除链接下划线 */
+            transition: background-color 0.3s ease; /* 添加背景颜色渐变效果 */
+        }
+
+        a.custom-link:hover {
+            background-color: #0056b3; /* 设置鼠标悬停时的背景颜色 */
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>TailorFinder收集结果</h1>
+<a href="./web.html" class="custom-link" style="position: absolute; top: 10px; right: 10px;">web站点收集结果</a>
+
+
+<table id="json-table" class="table table-striped">
+    <thead>
+        <tr>
+            <th id="domain-filter">域名 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="ip-filter">IP <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="port-filter">端口 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="protocol-filter">协议 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="server-filter">服务 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="zujian-filter">组件 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="version-filter">版本 <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="cpe-filter">CPE <input type="text" class="filter-input" placeholder="Filter"></th>
+            <th id="fu-filter">附加信息 <input type="text" class="filter-input" placeholder="Filter"></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+<script>
+    var jsonData1 =;
+    var tableBody = document.getElementById('json-table').getElementsByTagName('tbody')[0];
+
+    var domainSelect = document.createElement('select');
+    domainSelect.className = 'form-control';
+    domainSelect.id = 'domain-select';
+    domainSelect.innerHTML = '<option value="">All domains</option>';
+    document.getElementById('domain-filter').innerHTML = 'Domains ';
+    var domainFilterContainer = document.createElement('div');
+    domainFilterContainer.className = 'domain-select-container';
+    domainFilterContainer.appendChild(domainSelect);
+    document.getElementById('domain-filter').appendChild(domainFilterContainer);
+
+    var ipSelect = document.createElement('select');
+    ipSelect.className = 'form-control';
+    ipSelect.id = 'ip-select';
+    ipSelect.innerHTML = '<option value="">All IPs</option>';
+    document.getElementById('ip-filter').innerHTML = 'IPS ';
+    var ipFilterContainer = document.createElement('div');
+    ipFilterContainer.className = 'ip-select-container';
+    ipFilterContainer.appendChild(ipSelect);
+    document.getElementById('ip-filter').appendChild(ipFilterContainer);
+
+    var portSelect = document.createElement('select');
+    portSelect.className = 'form-control';
+    portSelect.id = 'port-select';
+    portSelect.innerHTML = '<option value="">All PORTS</option>';
+    document.getElementById('port-filter').innerHTML = 'Ports ';
+    var portFilterContainer = document.createElement('div');
+    portFilterContainer.className = 'port-select-container';
+    portFilterContainer.appendChild(portSelect);
+    document.getElementById('port-filter').appendChild(portFilterContainer);
+
+
+    var protocolSelect = document.createElement('select');
+    protocolSelect.className = 'form-control';
+    protocolSelect.id = 'protocol-select';
+    protocolSelect.innerHTML = '<option value="">All protocol</option>';
+    document.getElementById('protocol-filter').innerHTML = 'protocol ';
+    var protocolFilterContainer = document.createElement('div');
+    protocolFilterContainer.className = 'protocol-select-container';
+    protocolFilterContainer.appendChild(protocolSelect);
+    document.getElementById('protocol-filter').appendChild(protocolFilterContainer);
+
+
+    var serverSelect = document.createElement('select');
+    serverSelect.className = 'form-control';
+    serverSelect.id = 'server-select';
+    serverSelect.innerHTML = '<option value="">All SERVERS</option>';
+    document.getElementById('server-filter').innerHTML = 'SERVERS ';
+    var serverFilterContainer = document.createElement('div');
+    serverFilterContainer.className = 'server-select-container';
+    serverFilterContainer.appendChild(serverSelect);
+    document.getElementById('server-filter').appendChild(serverFilterContainer);
+
+    var zujianSelect = document.createElement('select');
+    zujianSelect.className = 'form-control';
+    zujianSelect.id = 'zujian-select';
+    zujianSelect.innerHTML = '<option value="">All zujian</option>';
+    document.getElementById('zujian-filter').innerHTML = 'CODE ';
+    var zujianFilterContainer = document.createElement('div');
+    zujianFilterContainer.className = 'zujian-select-container';
+    zujianFilterContainer.appendChild(zujianSelect);
+    document.getElementById('zujian-filter').appendChild(zujianFilterContainer);
+
+
+    var versionSelect = document.createElement('select');
+    versionSelect.className = 'form-control';
+    versionSelect.id = 'version-select';
+    versionSelect.innerHTML = '<option value="">All version</option>';
+    document.getElementById('version-filter').innerHTML = 'version ';
+    var versionFilterContainer = document.createElement('div');
+    versionFilterContainer.className = 'version-select-container';
+    versionFilterContainer.appendChild(versionSelect);
+    document.getElementById('version-filter').appendChild(versionFilterContainer);
+
+
+    var CPESelect = document.createElement('select');
+    CPESelect.className = 'form-control';
+    CPESelect.id = 'cpe-select';
+    CPESelect.innerHTML = '<option value="">All CPE</option>';
+    document.getElementById('cpe-filter').innerHTML = 'cpe ';
+    var CPEFilterContainer = document.createElement('div');
+    CPEFilterContainer.className = 'cpe-select-container';
+    CPEFilterContainer.appendChild(CPESelect);
+    document.getElementById('cpe-filter').appendChild(CPEFilterContainer);
+
+    var fuSelect = document.createElement('select');
+    fuSelect.className = 'form-control';
+    fuSelect.id = 'fu-select';
+    fuSelect.innerHTML = '<option value="">备注</option>';
+    document.getElementById('fu-filter').innerHTML = '备注信息 ';
+    var fuFilterContainer = document.createElement('div');
+    fuFilterContainer.className = 'fu-select-container';
+    fuFilterContainer.appendChild(fuSelect);
+    document.getElementById('fu-filter').appendChild(fuFilterContainer);
+
+
+    // Populate the table
+    jsonData.forEach(function (item) {
+        for (var domain in item) {
+            var row = tableBody.insertRow();
+            var cellDomain = row.insertCell(0);
+            var cellIP = row.insertCell(1);
+            var cellPort = row.insertCell(2);
+            var cellprotocol = row.insertCell(3);
+            var cellserver = row.insertCell(4);
+            var cellzujian = row.insertCell(5);
+            var cellversion = row.insertCell(6);
+            var cellcpe = row.insertCell(7);
+            var cellfu = row.insertCell(8);
+
+            cellDomain.textContent = domain;
+            cellIP.textContent = item[domain].ip;
+            cellPort.textContent = item[domain].port;
+            cellprotocol.textContent = item[domain].protocol;
+            cellserver.textContent = item[domain].server;
+            cellzujian.textContent = item[domain].zujian;
+            cellversion.textContent = item[domain].version;
+            cellcpe.textContent = item[domain].cpe;
+            cellfu.textContent =item[domain].fu;
+
+
+            // Add domain to select dropdown
+            if (domain && !document.querySelector('#domain-select option[value="' + domain + '"]')) {
+                var option = document.createElement('option');
+                option.value = domain;
+                option.textContent = domain;
+                domainSelect.appendChild(option);
+            }
+
+            // Add ip to select dropdown
+            if (item[domain].ip && !document.querySelector('#ip-select option[value="' + item[domain].ip + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].ip;
+                option.textContent = item[domain].ip;
+                ipSelect.appendChild(option);
+            }
+            // Add port to select dropdown
+            if (item[domain].port && !document.querySelector('#port-select option[value="' + item[domain].port + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].port;
+                option.textContent = item[domain].port;
+                portSelect.appendChild(option);
+            }
+            // Add protocol to select dropdown
+            if (item[domain].protocol && !document.querySelector('#protocol-select option[value="' + item[domain].protocol + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].protocol;
+                option.textContent = item[domain].protocol;
+                protocolSelect.appendChild(option);
+            }
+            // Add server to select dropdown
+            if (item[domain].server && !document.querySelector('#server-select option[value="' + item[domain].server + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].server;
+                option.textContent = item[domain].server;
+                serverSelect.appendChild(option);
+            }
+            // Add zujian to select dropdown
+            if (item[domain].zujian && !document.querySelector('#zujian-select option[value="' + item[domain].zujian + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].zujian;
+                option.textContent = item[domain].zujian;
+                zujianSelect.appendChild(option);
+            }
+            // Add verison to select dropdown
+            if (item[domain].version && !document.querySelector('#version-select option[value="' + item[domain].version + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].version;
+                option.textContent = item[domain].version;
+                versionSelect.appendChild(option);
+            }
+
+            // Add CPE to select dropdown
+            if (item[domain].cpe && !document.querySelector('#cpe-select option[value="' + item[domain].cpe + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].cpe;
+                option.textContent = item[domain].cpe;
+                CPESelect.appendChild(option);
+            }
+
+            // Add fu to select dropdown
+            if (item[domain].fu && !document.querySelector('#fu-select option[value="' + item[domain].fu + '"]')) {
+                var option = document.createElement('option');
+                option.value = item[domain].fu;
+                option.textContent = item[domain].fu;
+                fuSelect.appendChild(option);
+            }
+        }
+    });
+
+    // Activate DataTables after the table is fully loaded
+    $(document).ready(function () {
+        var dataTable = $('#json-table').DataTable();
+        // Add search functionality to each column
+        $('.filter-input').on('input', function () {
+            var columnIndex = $(this).closest('th').index();
+            dataTable.column(columnIndex).search(this.value).draw();
+        });
+
+        $('#domain-select').on('change', function () {
+            var domainValue = this.value;
+            dataTable.column(0).search(domainValue).draw();
+        });
+
+        $('#ip-select').on('change', function () {
+            var ipValue = this.value;
+            dataTable.column(1).search(ipValue).draw();
+        });
+
+        $('#port-select').on('change', function () {
+            var portValue = this.value;
+            dataTable.column(2).search(portValue).draw();
+        });
+
+        // Add search functionality for protocol dropdown
+        $('#protocol-select').on('change', function () {
+            var protocolValue = this.value;
+            dataTable.column(3).search(protocolValue).draw();
+        });
+
+
+        $('#server-select').on('change', function () {
+            var serverValue = this.value;
+            dataTable.column(4).search(serverValue).draw();
+        });
+
+
+        $('#zujian-select').on('change', function () {
+            var zujianValue = this.value;
+            dataTable.column(5).search(zujianValue).draw();
+        });
+        $('#version-select').on('change', function () {
+            var versionValue = this.value;
+            dataTable.column(6).search(versionValue).draw();
+        });
+        $('#cpe-select').on('change', function () {
+            var cpeValue = this.value;
+            dataTable.column(7).search(cpeValue).draw();
+        });
+        $('#fu-select').on('change', function () {
+            var fuValue = this.value;
+            dataTable.column(8).search(fuValue).draw();
+        });
+
+        // Add copy button for each column
+        $('#json-table thead th').each(function (index) {
+            var copyButton = document.createElement('button');
+            copyButton.className = 'copy-column-btn btn btn-primary btn-sm';
+            copyButton.textContent = 'Copy Column';
+            copyButton.setAttribute('data-column-index', index);
+            this.appendChild(copyButton);
+
+            var clipboard = new ClipboardJS(copyButton, {
+                text: function (trigger) {
+                    var columnIndex = trigger.getAttribute('data-column-index');
+                    return dataTable.column(columnIndex).data().toArray().join('\\n');
+                }
+            });
+
+            clipboard.on('success', function (e) {
+                alert('Column copied to clipboard!');
+            });
+
+            clipboard.on('error', function (e) {
+                alert('Copy failed. Please try again.');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

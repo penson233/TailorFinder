@@ -2,10 +2,11 @@
 
 # 更新tips：
 
-优化了公司子域名ip138指纹标题乱码问题，美化了前端 参考了该项目（直接抄代码）https://github.com/timwhitez/Frog-checkCDN 新增cdn识别功能（可以开启关闭）
--iscdn 默认为False
+优化了输出前端，使结果更美观
 
+![image-20240422094507501](README.assets/image-20240422094507501.png)
 
+![image-20240422094635981](README.assets/image-20240422094635981.png)
 
 一款方便懒人对企业资产自动化收集工具,因为避免重复造轮子，所以收集过程中用到了一些已经有的工具故取名裁缝-Tailorfinder 
 

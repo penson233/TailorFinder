@@ -10,7 +10,6 @@ import json
 import os
 import re
 import requests
-from tools.commons import pre_html,aft_html
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from tools import WebfingerScan,colorprint,systemcmd
 import openpyxl
@@ -84,7 +83,7 @@ def Port_Scan(outpath,name,portfile):
 
 
 
-    systemcmd.runshell(masscan.format(outpath,outpath),"massscan")
+    # systemcmd.runshell(masscan.format(outpath,outpath),"massscan")
 
     with open("./finger/finger.json",'r') as f:
         fingerjson=json.loads(f.read())["fingerprint"]
@@ -136,18 +135,23 @@ def Port_Scan(outpath,name,portfile):
     with open(outpath+"/requests.txt",'w') as f:
         f.write('\n'.join(request))
 
+    with open("tools/html/web.html",'r') as f:
+        read=f.read()
+
+    output=read.replace("penson",name+"收集结果").replace("var jsonData1 =;",f"var jsonData ={tbody}\n").replace('Portdetail.html',name+'_Portdetail.html')
+
     with open(outpath+"/"+name+"_web.html","w") as f:
-        f.write(pre_html.replace("penson",name+"收集结果")+f"var jsonData ={tbody}"+aft_html)
+        f.write(output)
 
 
     #处理nmap扫描结果
-    HandleNmap(outpath)
+    HandleNmap(outpath,name)
     colorprint.Green("[+] success !!! saved in "+outpath)
 
 
-def HandleNmap(outpath):
-    nmapcsv="域名,IP,端口,协议,服务,组件,版本,CPE,附加信息\n"
+def HandleNmap(outpath,filename):
     files=os.listdir(f"{outpath}/nmap")
+    tbody = []
     for file in files:
         if "html" in file:
             with open(f"{outpath}/nmap/"+file) as f:
@@ -157,23 +161,29 @@ def HandleNmap(outpath):
             if not re.match("\d+\.\d+\.\d+\.\d+", name):
                 domain=name
 
-            nmapcsv+=HandleNmapHtml(domain,read)
-    with open(f"{outpath}/Portdetail.csv","w") as f:
-        f.write(nmapcsv)
+            HandleNmapHtml(domain,read,tbody)
 
-def HandleNmapHtml(domain,read):
+
+    with open("tools/html/Portdetail.html",'r') as f:
+        read= f.read()
+
+    output=read.replace("penson", "端口收集结果").replace("var jsonData1 =;", f"var jsonData ={tbody}\n").replace('web.html',filename+"_web.html")
+    with open(f"{outpath}/"+filename+"_Portdetail.html","w") as f:
+        f.write(output)
+
+def HandleNmapHtml(domain,read,tbody):
     soup = BeautifulSoup(read, 'html.parser')
     table_div =soup.find('table', id='table-services')
 
     body=table_div.find("tbody")
     rows = body.find_all('tr')
 
-    temp=""
     for row in rows:
         columns = row.find_all('td')
         row_data = [column.text.strip() for column in columns]
-        temp+=domain+","+','.join(row_data)+"\n"
-    return temp
+        tbody.append({domain:{'ip':row_data[0],'port':row_data[1],'protocol':row_data[2],'server':row_data[3],'zujian':row_data[4],'version':row_data[5],'cpe':row_data[6],'fu':row_data[7]}})
+
+    return tbody
 
 
 
@@ -183,15 +193,17 @@ def http_https_probe(target,request,ip,tbody,fingerjson):
     https_url = f'https://{target}'
 
     temp=target.split(':')
-    fingerlist=[]
+
     #发送http请求
     try:
+        fingerlist = []
         httprequets(http_url, fingerjson, fingerlist, request, tbody, temp,ip)
     except requests.RequestException as e:
         pass
 
     #发送https请求
     try:
+        fingerlist = []
         httprequets(https_url, fingerjson, fingerlist, request, tbody, temp,ip)
     except requests.RequestException as e:
         pass
@@ -222,6 +234,7 @@ def httprequets(http_url,fingerjson,fingerlist,request,tbody,temp,ip):
             title = "None"
     except:
         title = "None"
+
     fingers = ""
     if len(fingerlist) > 0:
         for finger in fingerlist:
@@ -229,6 +242,8 @@ def httprequets(http_url,fingerjson,fingerlist,request,tbody,temp,ip):
                 fingers += finger["cms"] + ","
             else:
                 fingers += f"[{finger['cms']},{finger['request']['path']}]" + " , "
+    else:
+        fingers += "空,"
 
     tbody.append({temp[0]: {'ip': ip, 'port': temp[1], 'server': http_url, 'title': title,
                             'code': str(response_http.status_code), "finger": fingers[:-1]}})
@@ -266,4 +281,3 @@ def httpsrequest(https_url, fingerjson, fingerlist, request, tbody, temp,ip):
                 fingers += f"[{finger['cms']},{finger['request']['path']}]" + " , "
 
         tbody.append({temp[0]:{'ip':ip,'port':temp[1],'server':https_url,'title':title, 'code':str(response_https.status_code),"finger":fingers[:-1]}})
-

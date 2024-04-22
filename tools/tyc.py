@@ -26,7 +26,7 @@ def finddomain(companyId,result,type=0,percent=0):
     r=requests.get(url_2,headers=header)
 
 
-
+    print(r.content.decode())
     results=json.loads(r.text)['data']
 
     if results["itemTotal"] !=0:
@@ -54,7 +54,7 @@ def findalldomain(name,percent,count):
     url_1="https://www.tianyancha.com/search"
 
     r=requests.get(url_1+"?key="+name,headers=header)
-
+    print(r.content.decode())
 
     idresult=json.loads(idre.findall(r.text)[0])['props']['pageProps']['dehydratedState']['queries'][0]['state']['data']['data']['companyList']
 
@@ -79,12 +79,12 @@ def findalldomain(name,percent,count):
                 print(e)
 
 
-    #找到分支机构
-    fenzhi_id=findfenzhijigou(companyId,count)
-    if len(fenzhi_id)> 0:
-        for fenzhi in fenzhi_id:
-
-            finddomain(fenzhi,result,type=1)
+    # #找到分支机构
+    # fenzhi_id=findfenzhijigou(companyId,count)
+    # if len(fenzhi_id)> 0:
+    #     for fenzhi in fenzhi_id:
+    #
+    #         finddomain(fenzhi,result,type=1)
 
 
     colorprint.Green("[+]tian_yan_cha found "+str(len(findchildrens))+" invested company")
@@ -126,7 +126,7 @@ def findfenzhijigou(id,count):
     for page in range(1,pagesize+1):
         url="https://capi.tianyancha.com/cloud-company-background/company/branchList?_=1709194614598&gid={}&pageSize=10&pageNum={}".format(id,page)
         r = requests.get(url, headers=header)
-
+        print(r.text)
         if "result" in json.loads(r.text)['data']:
             results = json.loads(r.text)['data']['result']
 
