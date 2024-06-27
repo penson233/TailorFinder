@@ -125,7 +125,7 @@ def findemail(domain_file,outpath):
 
 
 
-def CollectSubdomain(domain_file,out_path,name,iscdn):
+def CollectSubdomain(domain_file,out_path,name,isshuffledns):
 
 
     alldomain=[]
@@ -141,16 +141,13 @@ def CollectSubdomain(domain_file,out_path,name,iscdn):
     colorprint.progress_bar(domains,CrtSearch,alldomain=alldomain)
 
 
-
     '''rappidns'''
     colorprint.Red("\n[-]using rappidns....")
     colorprint.progress_bar(domains,rappidnssearch , alldomain=alldomain)
 
-
     '''securitytrails'''
     colorprint.Red("\n[-]using securitytrails....")
     colorprint.progress_bar(domains, securscan, alldomain=alldomain)
-
 
     '''ip138'''
     colorprint.Red("\n[-]using ip138....")
@@ -163,7 +160,7 @@ def CollectSubdomain(domain_file,out_path,name,iscdn):
 
     '''hunter'''
     colorprint.Red("\n[-]using hunter....")
-    colorprint.progress_bar(domains, hunterscan, alldomain=alldomain)
+    colorprint.progress_bar(domains, hunterscan,alldomain=alldomain,outpath=out_path)
 
 
     '''assetfinder'''
@@ -174,9 +171,10 @@ def CollectSubdomain(domain_file,out_path,name,iscdn):
     colorprint.Red("[-]using subfinder....")
     subfinderscan(domain_file,out_path,alldomain,platform)
 
-    '''shuffledns'''
-    colorprint.Red("[-]using shuffledns to brute subdomains....")
-    shufflednsscan(domain_file,out_path,alldomain,platform)
+    if isshuffledns:
+        '''shuffledns'''
+        colorprint.Red("[-]using shuffledns to brute subdomains....")
+        shufflednsscan(domain_file,out_path,alldomain,platform)
 
     colorprint.Green("[+]collect all subdomains successfully")
     allDomain(alldomain,out_path)
@@ -185,7 +183,7 @@ def CollectSubdomain(domain_file,out_path,name,iscdn):
     wb.save(out_path+'/'+'test.xlsx')
 
     # '''fofa hunter c段收集统计'''
-    readxls(out_path,name,iscdn)
+    readxls(out_path,name)
     colorprint.Green("[+]task finished")
 
 

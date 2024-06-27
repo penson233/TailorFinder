@@ -7,8 +7,6 @@ import base64
 import requests
 
 def fofascan(domain,alldomain):
-
-    fofawb.append(["domain", 'header_code', 'ip', 'port', 'webtitle'])
     fofa_ip=''
 
     page = 1

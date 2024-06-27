@@ -2,7 +2,22 @@
 
 # 更新tips：
 
-优化了输出前端，使结果更美观
+新增命令
+
+```
+  -isshuffledns ISSHUFFLEDNS
+                        Whether to use shuffledns to brute domain
+  -onlyhttp ONLYHTTP    Whether to use port scan with http/https,it must with -onlyhttp=true
+  -onlyhttpThread ONLYHTTPTHREAD
+                        the thread of Whether to use port scan with http/https
+
+```
+
+优化了web收集及端口搜集流程，优化hunter批量搜集流程
+
+
+
+
 
 ![image-20240422094507501](README.assets/image-20240422094507501.png)
 
@@ -114,7 +129,7 @@ pip3 install -r requirements.txt
 python3 main.py -h
 ```
 
-![image-20240215155716912](README.assets/image-20240215155716912.png)
+![image-20240627110940284](README.assets/image-20240627110940284.png)
 
 # 使用方法及参数
 
@@ -148,6 +163,8 @@ python3.8 main.py -name 公司名称  -p 控股子公司的百分比 -fc 搜集�
 
 建议搜集子域名放服务器上跑，因为内置子域名字典达到180w+，速度比较慢
 
+增加是否使用shuffledns ，shuffledns子域名爆破较慢
+
 ```
 python3.8 main.py -name 王尼玛有限公司 -o ./test -d ./test/domain
 ```
@@ -167,6 +184,14 @@ python3.8 main.py -name 王尼玛有限公司 -o ./test -d ./test/domain
 ```
 python3.8 main.py -name 公司名称 -o 输出保存路径 -ps true
 ```
+
+支持只搜集web
+
+```
+python3.8 main.py -name 公司名称 -o 输出保存路径 -ps true -onlyhttp true
+```
+
+
 
 也可以自定义表格，只需要满足格式即可，从alive_domain表里取域名
 

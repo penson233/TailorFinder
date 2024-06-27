@@ -89,8 +89,6 @@ def checkAll(outpath,data):
         ip = getIP(data)
     else:
         ip = data
-    if ip is None:
-        return
 
 
 
@@ -99,13 +97,13 @@ def checkAll(outpath,data):
     if cdnip == True:
         print(data+": CDN")
         wFile(outpath+'/cdn.txt',data)
-        return
+        return True
 
     cdnasn = checkASN(ip)
     if cdnasn == True:
         print(data+": CDN")
         wFile(outpath+'/cdn.txt',data)
-        return
+        return True
 
     if not re.search(r'\d+\.\d+\.\d+\.\d+', data):
         cnames = getCNAMES(data)
@@ -117,26 +115,9 @@ def checkAll(outpath,data):
         if match == True:
             print(data+": CDN")
             wFile(outpath+'/cdn.txt',data)
-            return
+            return True
 
     wFile(outpath+'/host.txt',data)
+    return False
 
 
-
-
-def CheckIfCdn(workbook,outpath):
-    all_domain_wb = workbook["alldomain"]
-    alive_wb = workbook['alive_domain']
-    alive_wb.append(["is_alive"])
-    columns = list(all_domain_wb.columns)
-
-    for domain in columns[0]:
-
-        checkAll(outpath,domain.value)
-
-    # # 然后执行后续代码
-    with open(outpath + "/host.txt") as f:
-        read = f.readlines()
-
-    for domain in read:
-        alive_wb.append([domain.replace('\n', '')])

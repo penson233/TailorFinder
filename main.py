@@ -14,6 +14,7 @@ from tools import colorprint,Portscan
 import time
 from functions import findallDomain,CollectSubdomain,CreateDatabase,HandleTable
 
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='TailorFinder powered by penson\nA asset collection tool for Chinese enterprises\n such as\n\npython3 main.py -name 王尼玛有限公司 -p 100 -o ./test/')
@@ -32,6 +33,15 @@ if __name__ == '__main__':
     parser.add_argument('-iscdn', type=bool, help='Whether to check cdn default is False', dest='iscdn',
                         default=False)
 
+    parser.add_argument('-isshuffledns', type=bool, help='Whether to use shuffledns to brute domain', dest='isshuffledns',
+                        default=False)
+    parser.add_argument('-onlyhttp', type=bool, help='Whether to use port scan with http/https,it must with -onlyhttp=true',
+                        dest='onlyhttp',
+                        default=False)
+    parser.add_argument('-onlyhttpThread', type=int, help='the thread of Whether to use port scan with http/https',
+                        dest='onlyhttpThread',
+                        default=100)
+
     args = parser.parse_args()
 
 
@@ -40,7 +50,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if args.portscan == True and args.collect == False:
-        Portscan.Port_Scan(args.outpath, args.name, args.portfile)
+        Portscan.Port_Scan(args.outpath, args.name, args.portfile,args.onlyhttp,args.iscdn,args.onlyhttpThread)
     else:
     
         if args.outpath =='':
@@ -55,25 +65,24 @@ if __name__ == '__main__':
                 CreateDatabase(args.name)
                 while True:
                     if args.domain_path != '':
-                        CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
+                        CollectSubdomain(args.domain_path, args.outpath, args.name,args.isshuffledns)
                     else:
                         findallDomain(args.name, args.outpath, args.percent,args.fcount)
                         if args.collect == True:
-                            CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.iscdn)
+                            CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.isshuffledns)
                             if args.portscan == True:
-                                Portscan.Port_Scan(args.outpath, args.name,args.portfile)
+                                Portscan.Port_Scan(args.outpath, args.name,args.portfile,args.onlyhttp,args.iscdn,args.onlyhttpThread)
                     HandleTable(args.outpath, args.name)
-    
                     time.sleep(args.time*3600*24)
     
             else:
                 if args.domain_path != '':
-                    CollectSubdomain(args.domain_path, args.outpath, args.name,args.iscdn)
+                    CollectSubdomain(args.domain_path, args.outpath, args.name,args.isshuffledns)
                     if args.portscan== True:
-                        Portscan.Port_Scan(args.outpath, args.name, args.portfile)
+                        Portscan.Port_Scan(args.outpath, args.name, args.portfile,args.onlyhttp,args.iscdn,args.onlyhttpThread)
                 else:
                     findallDomain(args.name,args.outpath,args.percent,args.fcount)
                     if args.collect==True:
-                        CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.iscdn)
+                        CollectSubdomain(args.outpath + "/domain", args.outpath, args.name,args.isshuffledns)
                         if args.portscan == True:
-                            Portscan.Port_Scan(args.outpath, args.name, args.portfile)
+                            Portscan.Port_Scan(args.outpath, args.name, args.portfile,args.onlyhttp,args.iscdn,args.onlyhttpThread)

@@ -55,18 +55,21 @@ def to_utf8(content, content_type):
             html_encode = "big5"
         elif 'utf-8' in content_type:
             html_encode = "utf-8"
+    try:
+        if html_encode == "" and html_encode2 != "" and html_encode != html_encode2:
+            html_encode = html_encode2
 
-    if html_encode == "" and html_encode2 != "" and html_encode != html_encode2:
-        html_encode = html_encode2
+        if html_encode == "" and html_encode != html_encode3:
+            html_encode = html_encode3
 
-    if html_encode == "" and html_encode != html_encode3:
-        html_encode = html_encode3
+        if html_encode != "" and html_encode != "utf-8" :
+            content = convert(content, html_encode, "utf-8")
 
-    if html_encode != "" and html_encode != "utf-8" :
-        content = convert(content, html_encode, "utf-8")
+        if html_encode == "utf-8":
+            content = convert(content, html_encode,"utf-8")
+    except:
+        return content
 
-    if html_encode == "utf-8":
-        content = convert(content, html_encode,"utf-8")
 
     return content
 
