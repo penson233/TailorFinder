@@ -22,7 +22,8 @@ def Ip138search(domain,alldomain):
     reald=domain.replace('\n','')
     url=f"https://chaziyu.com/{reald}/"
     try:
-        r=requests.get(url,headers=header)
+        r=requests.get(url,headers=header,verify=False)
+
         soup = BeautifulSoup(r.text, "html.parser")
         table=soup.find_all("table")
         if len(table) >0:
@@ -40,5 +41,6 @@ def Ip138search(domain,alldomain):
         else:
             print(f"\n[-]no found in {domain}")
     except Exception as e:
-        print(f"\n[-]no found in {domain}")
+        print(e)
+        print(f"\n[-]error no found in {domain}")
 
