@@ -15,7 +15,6 @@ def hunterscan(domain,alldomain,outpath):
     search = base64.urlsafe_b64encode(query.encode("utf-8")).decode().replace('=','')
 
     task_id=huntergettask(search)
-
     if task_id!=0:
         while True:
             if gettaskstatus(task_id):
@@ -36,9 +35,13 @@ def huntergettask(search):
 
     r = requests.post(url=url, verify=False).json()
     print(r)
-    if "task_id" not in r["data"]:
-        return 0
-    task_id=r["data"]["task_id"]
+    task_id=0
+    if r['data'] !=None:
+        if "task_id" not in r["data"]:
+            return task_id
+        else:
+            task_id=r["data"]["task_id"]
+
     return task_id
 
 #查看是否可以下载
@@ -46,7 +49,6 @@ def gettaskstatus(task_id):
     while True:
         r=requests.get(f"https://hunter.qianxin.com/openApi/search/batch/{str(task_id)}?api-key={hunter_key}",verify=False)
         result=r.json()
-        print(result)
         if result["code"] ==200:
             if result["data"]["status"]=="已完成":
                 return True
@@ -54,14 +56,12 @@ def gettaskstatus(task_id):
                 continue
         else:
             print(result)
-            break
 
 #获取hunter查询结果
 def gettaskdetail(task_id,alldomain,domain,outpath):
 
     r=requests.get(f"https://hunter.qianxin.com/openApi/search/download/{task_id}?api-key={hunter_key}",verify=False)
-
-    with open(f"hunteroutput_{domain}.csv","w")as f:
+    with open(f"{outpath}/hunteroutput_{domain}.csv","w")as f:
         f.write(r.text)
 
     repeat=[]
